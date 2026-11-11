@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Indstillinger – {{ app_name }}{% endblock %}
+{% block body %}
+<header class="topbar">
+  <div class="brand">{{ app_name }} · Indstillinger</div>
+  <div id="status" class="status-box"></div>
+  <nav class="topbar-links"><a href="/admin">← Kontrolpanel</a><a href="/logout">Log ud</a></nav>
+</header>
+<main class="settings-grid">
+  <section class="panel">
+    <h2>Fallback og forbindelsesovervågning</h2>
+    <form id="settings-form" class="settings-form">
+      <label>Fallback-scene <select name="fallback_scene_id"></select></label>
+      <label class="chk"><input type="checkbox" name="auto_fallback"> Automatisk fallback ved tab af kontrolforbindelse</label>
+      <div class="row">
+        <label>Heartbeat-interval (s) <input type="number" name="heartbeat_interval" min="2" max="60" required></label>
+        <label>Advarsel efter (s) <input type="number" name="warning_after" min="5" max="3600" required></label>
+        <label>Fallback efter (s) <input type="number" name="fallback_after" min="10" max="7200" required></label>
+      </div>
+      <h2>Visning</h2>
+      <div class="row">
+        <label>Skærmformat <select name="screen_format">
+          <option value="9:16">9:16 portræt (1080×1920)</option>
+          <option value="3:4">3:4 portræt (1080×1440)</option>
+          <option value="16:9">16:9 landskab (1920×1080)</option>
+          <option value="4:3">4:3 landskab (1440×1080)</option>
+        </select></label>
+        <label>Standard primær tekst (px) <input type="number" name="default_primary_size" min="10" max="400" required></label>
+        <label>Standard sekundær tekst (px) <input type="number" name="default_secondary_size" min="10" max="400" required></label>
+      </div>
+      <p class="muted small">Tekststørrelser er pixels på et lærred, der er 1080 px på den korte led, og skaleres til skærmen.</p>
+      <button class="btn btn-primary" type="submit">Gem indstillinger</button>
+    </form>
+  </section>
+  <section class="panel">
+    <h2>Systemstatus</h2>
+    <dl id="sys" class="facts"></dl>
+  </section>
+  <section class="panel log-panel">
+    <div class="panel-head"><h2>Hændelseslog</h2><button id="btn-log" class="btn btn-sm" type="button">Opdatér</button></div>
+    <table class="log"><thead><tr><th>Tid</th><th>Type</th><th>Hændelse</th></tr></thead><tbody id="log"></tbody></table>
+  </section>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='js/settings.js') }}?v={{ version }}"></script>{% endblock %}

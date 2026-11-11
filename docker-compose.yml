@@ -1,0 +1,21 @@
+services:
+  talerstol:
+    build: .
+    image: talerstol:latest
+    container_name: talerstol
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - talerstol-data:/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  talerstol-data:

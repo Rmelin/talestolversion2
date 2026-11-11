@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="login">
+  <h1>{{ app_name }}</h1>
+  <nav class="index-links">
+    <a class="card index-link" href="/admin"><strong>Kontrolpanel</strong><span>Klargør og vis scener (login)</span></a>
+    <a class="card index-link" href="/monitor"><strong>Monitor</strong><span>Read-only overvågning{% if not public_monitor %} (login){% endif %}</span></a>
+    <a class="card index-link" href="/display"><strong>Display</strong><span>Talerstolens skærm{% if not public_display %} (login){% endif %}</span></a>
+  </nav>
+  {% if user %}<p class="muted">Logget ind som {{ user }} · <a href="/logout">Log ud</a></p>{% endif %}
+</main>
+{% endblock %}

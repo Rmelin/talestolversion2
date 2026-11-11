@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Monitor – {{ app_name }}{% endblock %}
+{% block body %}
+<header class="topbar">
+  <div class="brand">{{ app_name }} · Monitor</div>
+  <div id="status" class="status-box"></div>
+  <nav class="topbar-links"><span class="muted">Read-only</span></nav>
+</header>
+<main class="monitor-grid">
+  <section class="panel monitor-card">
+    <div class="panel-head"><h2>Live</h2><span id="live-name" class="muted"></span></div>
+    <div id="live-stage" class="stage-box big"></div>
+  </section>
+  <section class="panel monitor-card">
+    <div class="panel-head"><h2>Næste (klargjort)</h2><span id="preview-name" class="muted"></span></div>
+    <div id="preview-stage" class="stage-box big"></div>
+  </section>
+  <section class="panel">
+    <h2>Status</h2>
+    <dl id="facts" class="facts"></dl>
+    <div id="mon-alert" class="alert" hidden></div>
+  </section>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='js/monitor.js') }}?v={{ version }}"></script>{% endblock %}

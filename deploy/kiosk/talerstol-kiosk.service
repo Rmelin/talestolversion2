@@ -1,0 +1,19 @@
+# Systemd user-service: kopiér til ~/.config/systemd/user/ og aktivér med
+#   systemctl --user daemon-reload && systemctl --user enable --now talerstol-kiosk
+# Kræver auto-login til skrivebordet (raspi-config → System → Boot / Auto Login → Desktop Autologin).
+[Unit]
+Description=Talerstol display (Chromium kiosk)
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Environment=TALERSTOL_URL=http://localhost:8000/display
+Environment=TALERSTOL_HEALTH=http://localhost:8000/api/health
+# Environment=TALERSTOL_ROTATE=90
+ExecStart=%h/talerstol/deploy/kiosk/talerstol-kiosk.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=graphical-session.target

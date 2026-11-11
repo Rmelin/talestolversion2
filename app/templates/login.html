@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Login – {{ app_name }}{% endblock %}
+{% block body %}
+<main class="login">
+  <h1>{{ app_name }}</h1>
+  <form method="post" action="/login" class="card login-form">
+    <input type="hidden" name="next" value="{{ next }}">
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+    <label>Brugernavn <input name="username" autocomplete="username" required autofocus></label>
+    <label>Adgangskode <input name="password" type="password" autocomplete="current-password" required></label>
+    <button class="btn btn-primary btn-lg" type="submit">Log ind</button>
+  </form>
+  <p class="muted"><a href="/monitor">Monitor</a> · <a href="/display">Display</a></p>
+</main>
+{% endblock %}

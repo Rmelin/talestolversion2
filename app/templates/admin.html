@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Kontrolpanel – {{ app_name }}{% endblock %}
+{% block body %}
+<header class="topbar">
+  <div class="brand">{{ app_name }}</div>
+  <div id="status" class="status-box" aria-live="polite"></div>
+  <div class="topbar-actions">
+    <button id="btn-acquire" class="btn btn-ok" type="button">Overtag kontrol</button>
+    <button id="btn-release" class="btn" type="button" hidden>Frigiv kontrol</button>
+    <button id="btn-fallback" class="btn btn-danger-outline" type="button">Vis fallback nu</button>
+  </div>
+  <nav class="topbar-links">
+    <a href="/admin/settings">Indstillinger</a>
+    <a href="/monitor" target="_blank" rel="noopener">Monitor</a>
+    <a href="/display" target="_blank" rel="noopener">Display</a>
+    <a href="/logout">Log ud</a>
+  </nav>
+</header>
+
+<div id="alert" class="alert" role="alert" hidden>
+  <span id="alert-text"></span>
+  <button type="button" class="btn btn-sm btn-ghost" id="alert-close">Luk</button>
+</div>
+
+<main class="admin-grid">
+  <!-- Sceneliste -->
+  <aside class="panel scenes-panel">
+    <div class="panel-head">
+      <h2>Scener</h2>
+      <button id="btn-new-scene" class="btn btn-sm" type="button">+ Ny scene</button>
+    </div>
+    <ul id="scene-list" class="scene-list"></ul>
+  </aside>
+
+  <!-- Preview / VIS / Live -->
+  <section class="center">
+    <div class="pvl">
+      <div class="panel monitor-card">
+        <div class="panel-head"><h2>Preview <small>klargjort</small></h2><span id="preview-name" class="muted"></span></div>
+        <div id="preview-stage" class="stage-box"><div class="empty">Ingen scene klargjort</div></div>
+      </div>
+      <div class="vis-col">
+        <button id="btn-vis" class="btn-vis" type="button" disabled>VIS</button>
+        <p id="vis-hint" class="muted vis-hint"></p>
+      </div>
+      <div class="panel monitor-card live-card">
+        <div class="panel-head"><h2>Live <small>på talerstolen</small></h2><span id="live-name" class="muted"></span></div>
+        <div id="live-stage" class="stage-box"></div>
+      </div>
+    </div>
+
+    <div class="lower">
+      <!-- Editor -->
+      <section class="panel editor-panel">
+        <div class="panel-head">
+          <h2>Rediger scene <span id="editor-dirty" class="dirty-tag" hidden>Ikke gemt</span></h2>
+          <div class="btn-row">
+            <button id="btn-duplicate" class="btn btn-sm" type="button">Duplikér</button>
+            <button id="btn-delete" class="btn btn-sm btn-danger-outline" type="button">Slet</button>
+          </div>
+        </div>
+        <form id="editor" class="editor" autocomplete="off" hidden>
+          <div class="editor-cols">
+            <div class="editor-fields">
+              <label class="wide">Navn <input name="name" maxlength="80" required></label>
+              <fieldset>
+                <legend>Tekst</legend>
+                <label class="wide">Primær tekst <input name="primary_text" maxlength="200"></label>
+                <div class="row">
+                  <label class="chk"><input type="checkbox" name="show_primary"> Vis</label>
+                  <label>Farve <input type="color" name="primary_color"></label>
+                  <label>Størrelse <input type="number" name="primary_size" min="10" max="400"></label>
+                </div>
+                <label class="wide">Sekundær tekst <input name="secondary_text" maxlength="300"></label>
+                <div class="row">
+                  <label class="chk"><input type="checkbox" name="show_secondary"> Vis</label>
+                  <label>Farve <input type="color" name="secondary_color"></label>
+                  <label>Størrelse <input type="number" name="secondary_size" min="10" max="400"></label>
+                </div>
+                <div class="row">
+                  <label>Vandret <select name="h_align"><option value="left">Venstre</option><option value="center">Midt</option><option value="right">Højre</option></select></label>
+                  <label>Lodret <select name="v_align"><option value="top">Top</option><option value="center">Midt</option><option value="bottom">Bund</option></select></label>
+                  <label class="chk"><input type="checkbox" name="text_shadow"> Skygge</label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Baggrund</legend>
+                <div class="row">
+                  <label>Farve <input type="color" name="bg_color"></label>
+                  <label>Billede <select name="bg_image_id" data-image-select></select></label>
+                  <label>Tilpasning <select name="bg_fit"><option value="cover">Fyld</option><option value="contain">Hele billedet</option></select></label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Logo</legend>
+                <div class="row">
+                  <label class="chk"><input type="checkbox" name="show_logo"> Vis</label>
+                  <label>Billede <select name="logo_image_id" data-image-select></select></label>
+                  <label>Placering <select name="logo_position"><option value="top">Top</option><option value="center">Midt</option><option value="bottom">Bund</option></select></label>
+                  <label>Bredde % <input type="number" name="logo_size" min="5" max="100"></label>
+                </div>
+              </fieldset>
+            </div>
+            <div class="editor-side">
+              <div class="muted small">Kladde</div>
+              <div id="draft-stage" class="stage-box draft"></div>
+              <button id="btn-save" class="btn btn-primary" type="submit">Gem scene</button>
+              <button id="btn-save-preview" class="btn" type="button">Gem og klargør</button>
+              <button id="btn-revert" class="btn btn-ghost" type="button">Fortryd ændringer</button>
+            </div>
+          </div>
+        </form>
+        <p id="editor-empty" class="muted">Vælg en scene i listen.</p>
+      </section>
+
+      <!-- Hurtigtekster -->
+      <section class="panel quick-panel">
+        <div class="panel-head">
+          <h2>Hurtigtekster <span id="quick-dirty" class="dirty-tag" hidden>Ikke gemt</span></h2>
+          <button id="btn-quick-save" class="btn btn-sm btn-primary" type="button" disabled>Gem</button>
+        </div>
+        <p class="muted small">Klargøres på den valgte scene: <strong id="quick-base">–</strong></p>
+        <ol id="quick-list" class="quick-list"></ol>
+      </section>
+    </div>
+  </section>
+
+  <!-- Billedbibliotek -->
+  <aside class="panel library-panel">
+    <div class="panel-head">
+      <h2>Billeder</h2>
+      <label class="btn btn-sm upload-btn">Upload
+        <input id="upload-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden>
+      </label>
+    </div>
+    <p class="muted small">PNG, JPEG, WebP, GIF · maks. {{ max_upload_mb }} MB</p>
+    <h3 class="sub">Seneste</h3>
+    <div id="recent-uploads" class="thumb-grid"></div>
+    <button id="btn-all-images" class="btn btn-sm btn-ghost" type="button">Alle billeder …</button>
+  </aside>
+</main>
+
+<dialog id="images-dialog" class="dialog">
+  <div class="panel-head"><h2>Alle billeder</h2><button class="btn btn-sm" type="button" data-close>Luk</button></div>
+  <div id="all-uploads" class="thumb-grid big"></div>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='js/admin.js') }}?v={{ version }}"></script>{% endblock %}
